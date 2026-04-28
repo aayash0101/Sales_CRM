@@ -3,16 +3,10 @@ import Lead from '../models/Lead.js';
 export const createLead = async (req, res) => {
   try {
     const { name, email, phone, company, status } = req.body;
-
     const lead = new Lead({
-      name,
-      email,
-      phone,
-      company,
-      status,
+      name, email, phone, company, status,
       createdBy: req.user._id,
     });
-
     const savedLead = await lead.save();
     res.status(201).json({ success: true, data: savedLead });
   } catch (error) {
@@ -26,7 +20,6 @@ export const getLeads = async (req, res) => {
     const leads = await Lead.find(filter)
       .sort({ createdAt: -1 })
       .populate("createdBy", "name email");
-
     res.json({ success: true, count: leads.length, data: leads });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -36,17 +29,18 @@ export const getLeads = async (req, res) => {
 export const updateLead = async (req, res) => {
   try {
     const { name, email, phone, company, status } = req.body;
-
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ success: false, message: "Lead not found" });
+    }
+    if (lead.createdBy.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Not authorized to update this lead" });
+    }
     const updated = await Lead.findByIdAndUpdate(
       req.params.id,
       { name, email, phone, company, status },
       { new: true, runValidators: true }
     );
-
-    if (!updated) {
-      return res.status(404).json({ success: false, message: 'Lead not found' });
-    }
-
     res.json({ success: true, data: updated });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -55,13 +49,15 @@ export const updateLead = async (req, res) => {
 
 export const deleteLead = async (req, res) => {
   try {
-    const deleted = await Lead.findByIdAndDelete(req.params.id);
-
-    if (!deleted) {
-      return res.status(404).json({ success: false, message: 'Lead not found' });
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      return res.status(404).json({ success: false, message: "Lead not found" });
     }
-
-    res.json({ success: true, message: 'Lead deleted successfully' });
+    if (lead.createdBy.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this lead" });
+    }
+    await Lead.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: "Lead deleted successfully" });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
