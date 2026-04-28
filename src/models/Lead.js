@@ -1,20 +1,18 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const LeadSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        requried: true,
-    },
-    email: String,
-    phone: String,
-    company: String,
+const leadSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    email: { type: String, trim: true, lowercase: true },
+    phone: { type: String, trim: true },
+    company: { type: String, trim: true },
     status: {
-        type: String,
-        enum: ['new', 'contacted', 'qualified', 'converted'],
-        default: 'new',
+      type: String,
+      enum: ["new", "contacted", "qualified", "converted"],
+      default: "new",
     },
-    createdAt: {
-    type: Date,
-    default: Date.now,
   },
-})
+  { timestamps: true }
+);
+
+export default mongoose.model("Lead", leadSchema);
