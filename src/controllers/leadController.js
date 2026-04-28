@@ -4,18 +4,29 @@ export const createLead = async (req, res) => {
   try {
     const { name, email, phone, company, status } = req.body;
 
-    const lead = new Lead({ name, email, phone, company, status });
-    const savedLead = await lead.save();
+    const lead = new Lead({
+      name,
+      email,
+      phone,
+      company,
+      status,
+      createdBy: req.user._id,
+    });
 
+    const savedLead = await lead.save();
     res.status(201).json({ success: true, data: savedLead });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error creating lead', error: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const getLeads = async (req, res) => {
   try {
-    const leads = await Lead.find().sort({ createdAt: -1 });
+    const filter = req.user.role === "admin" ? {} : { createdBy: req.user._id };
+    const leads = await Lead.find(filter)
+      .sort({ createdAt: -1 })
+      .populate("createdBy", "name email");
+
     res.json({ success: true, count: leads.length, data: leads });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
