@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './src/config/db.js';
 import leadRoutes from "./src/routes/leadRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
+import customerRoutes from "./src/routes/customerRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -16,7 +17,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/leads", leadRoutes);
-app.use("/api/auth", userRoutes)
+app.use("/api/auth", userRoutes);
+app.use("/api/customers", customerRoutes);
 
 // Test route
 app.get('/', (req, res) => {
