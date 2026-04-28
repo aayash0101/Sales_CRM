@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './src/config/db.js';
 import leadRoutes from "./src/routes/leadRoutes.js";
+import userRoutes from "./src/routes/userRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -15,6 +16,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/leads", leadRoutes);
+app.use("/api/auth", userRoutes)
 
 // Test route
 app.get('/', (req, res) => {
