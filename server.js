@@ -6,6 +6,7 @@ import leadRoutes from "./src/routes/leadRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import customerRoutes from "./src/routes/customerRoutes.js";
 import dealRoutes from "./src/routes/dealRoutes.js";
+import statsRoutes from "./src/routes/statsRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -21,6 +22,7 @@ app.use("/api/leads", leadRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/deals", dealRoutes);
+app.use("/api/stats", statsRoutes);
 
 // Test route
 app.get('/', (req, res) => {
