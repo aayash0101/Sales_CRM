@@ -1,5 +1,18 @@
-import Deal from "../models/Deal,js";
+import Deal from "../models/Deal.js";
 
+export const createDeal = async (req, res) => {
+    try {
+        const { title, customer, value, stage, expectedCloseDate, notes } = req.body;
+        const deal = new Deal({
+            title, customer, value, stage, expectedCloseDate, notes,
+            createdBy: req.user._id,
+        });
+        const savedDeal = await deal.save();
+        res.status(201).json({ success: true, data: savedDeal });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
 export const getDeals = async (req, res) => {
     try {
         const filter = req.user.role === "admin" ? {} : { createdBy: req.user._id };
