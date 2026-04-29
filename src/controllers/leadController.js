@@ -17,10 +17,26 @@ export const createLead = async (req, res) => {
 
 export const getLeads = async (req, res) => {
   try {
+    const { status, search } = req.query;
+
     const filter = req.user.role === "admin" ? {} : { createdBy: req.user._id };
+
+    if (status) {
+      filter.status = status;
+    }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { company: { $regex: search, $options: "i" } },
+      ];
+    }
+
     const leads = await Lead.find(filter)
       .sort({ createdAt: -1 })
       .populate("createdBy", "name email");
+
     res.json({ success: true, count: leads.length, data: leads });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
