@@ -5,6 +5,7 @@ import connectDB from './src/config/db.js';
 import leadRoutes from "./src/routes/leadRoutes.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import customerRoutes from "./src/routes/customerRoutes.js";
+import dealRoutes from "./src/routes/dealRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/api/leads", leadRoutes);
 app.use("/api/auth", userRoutes);
 app.use("/api/customers", customerRoutes);
+app.use("/api/deals", dealRoutes);
 
 // Test route
 app.get('/', (req, res) => {
